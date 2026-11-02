@@ -2,44 +2,71 @@
 
 import { Suspense, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { useListTradesQuery } from "@/lib/api/tradesApi";
 import { TradeStatusSchema, type TradeStatus } from "@/lib/schemas";
 import { StatusFilter } from "@/components/StatusFilter";
 import { TradesTable } from "@/components/TradesTable";
-import { EmptyState, Spinner } from "@/components/ui";
+import { EmptyState } from "@/components/ui";
 
 const Header = styled.div`
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: ${({ theme }) => theme.space.lg};
-  margin-bottom: ${({ theme }) => theme.space.lg};
+  gap: var(--space-16);
+  margin-bottom: var(--space-16);
 
   h1 {
     margin: 0;
-    font-size: ${({ theme }) => theme.fontSizes.xl};
-    font-weight: ${({ theme }) => theme.weights.semibold};
-  }
-
-  p {
-    margin: 4px 0 0;
-    color: ${({ theme }) => theme.colors.textMuted};
-    font-size: ${({ theme }) => theme.fontSizes.sm};
+    font-size: var(--text-heading-lg);
+    line-height: var(--text-title-line-height);
+    font-weight: var(--text-title-weight);
   }
 `;
 
 const FilterRow = styled.div`
-  margin-bottom: ${({ theme }) => theme.space.lg};
+  margin-bottom: var(--space-16);
 `;
 
-const LoadingRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.space.sm};
-  color: ${({ theme }) => theme.colors.textMuted};
-  font-size: ${({ theme }) => theme.fontSizes.sm};
+const shimmer = keyframes`
+  from { left: -40%; }
+  to { left: 100%; }
 `;
+
+const SkeletonRow = styled.div`
+  position: relative;
+  overflow: hidden;
+  height: var(--row-lg);
+  margin-bottom: var(--space-4);
+  border-radius: var(--radius-small);
+  background: #eef0ef;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -40%;
+    width: 40%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.7),
+      transparent
+    );
+    animation: ${shimmer} 1.2s linear infinite;
+  }
+`;
+
+function TableSkeleton() {
+  return (
+    <div>
+      {Array.from({ length: 8 }, (_, i) => (
+        <SkeletonRow key={i} />
+      ))}
+    </div>
+  );
+}
 
 function parseStatuses(raw: string[]): TradeStatus[] {
   return raw.flatMap((s) => {
@@ -51,11 +78,7 @@ function parseStatuses(raw: string[]): TradeStatus[] {
 export default function TradesPage() {
   return (
     <Suspense
-      fallback={
-        <LoadingRow>
-          <Spinner /> Loading…
-        </LoadingRow>
-      }
+      fallback={<TableSkeleton />}
     >
       <TradesPageInner />
     </Suspense>
@@ -108,9 +131,7 @@ function TradesPageInner() {
       </FilterRow>
 
       {query.isLoading ? (
-        <LoadingRow>
-          <Spinner /> Loading trades…
-        </LoadingRow>
+        <TableSkeleton />
       ) : query.isError ? (
         <EmptyState
           title="Failed to load trades"

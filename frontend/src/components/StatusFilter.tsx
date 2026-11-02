@@ -11,33 +11,40 @@ const ALL_STATUSES: TradeStatus[] = [
   "error",
 ];
 
-const Row = styled.div`
-  display: flex;
+const Track = styled.div`
+  display: inline-flex;
   flex-wrap: wrap;
-  gap: ${({ theme }) => theme.space.sm};
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  min-height: var(--control-md-height);
+  background: var(--bg-tint);
+  border-radius: var(--radius-control);
 `;
 
-const Chip = styled.div<{ $active: boolean }>`
+const Segment = styled.button<{ $active: boolean }>`
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: ${({ theme }) => `${theme.space.xs} ${theme.space.md}`};
-  border-radius: ${({ theme }) => theme.radii.pill};
-  border: 1px solid
-    ${({ theme, $active }) =>
-      $active ? theme.colors.accent : theme.colors.border};
-  background: ${({ theme, $active }) =>
-    $active ? theme.colors.accentSoft : theme.colors.surface};
-  color: ${({ theme, $active }) =>
-    $active ? theme.colors.accent : theme.colors.text};
-  font-size: ${({ theme }) => theme.fontSizes.xs};
-  font-weight: ${({ theme }) => theme.weights.medium};
+  gap: var(--space-4);
+  height: var(--control-sm-height);
+  padding: 0 var(--space-12);
+  border: var(--border-width-hairline) solid transparent;
+  border-radius: calc(var(--radius-control) - var(--space-2));
+  background: ${({ $active }) => ($active ? "var(--bg-default)" : "transparent")};
+  box-shadow: ${({ $active }) => ($active ? "var(--elevation-low)" : "none")};
+  color: ${({ $active }) =>
+    $active ? "var(--fg-default)" : "var(--fg-secondary)"};
+  font-size: var(--text-control);
+  line-height: var(--text-control-line-height);
   text-transform: capitalize;
   cursor: pointer;
-  user-select: none;
+  transition:
+    color var(--duration-fast) var(--easing-standard),
+    background-color var(--duration-fast) var(--easing-standard),
+    box-shadow var(--duration-fast) var(--easing-standard);
 
   .count {
-    color: ${({ theme }) => theme.colors.textFaint};
+    color: var(--fg-tertiary);
   }
 `;
 
@@ -61,17 +68,22 @@ export function StatusFilter({
   };
 
   return (
-    <Row>
-      {ALL_STATUSES.map((s) => (
-        <Chip
-          key={s}
-          $active={selected.includes(s)}
-          onClick={() => toggle(s)}
-        >
-          <span>{s}</span>
-          <span className="count">{counts[s] ?? 0}</span>
-        </Chip>
-      ))}
-    </Row>
+    <Track role="group" aria-label="Filter by status">
+      {ALL_STATUSES.map((s) => {
+        const active = selected.includes(s);
+        return (
+          <Segment
+            key={s}
+            type="button"
+            $active={active}
+            aria-pressed={active}
+            onClick={() => toggle(s)}
+          >
+            <span>{s}</span>
+            <span className="count">{counts[s] ?? 0}</span>
+          </Segment>
+        );
+      })}
+    </Track>
   );
 }

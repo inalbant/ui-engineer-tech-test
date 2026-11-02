@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Providers } from "./providers";
 import { AppShell } from "@/components/AppShell";
+import "@/lib/ds/tokens.css";
 
 export const metadata: Metadata = {
   title: "Yantra",
@@ -13,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="light">
       <body>
         <Providers>
           <AppShell>{children}</AppShell>

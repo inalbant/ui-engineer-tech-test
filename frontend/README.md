@@ -9,7 +9,9 @@ to run the code.
 - **Next.js 16.1.6** (App Router) + React 19 + TypeScript strict
 - **Redux Toolkit + RTK Query** (server + client state)
 - **redux-persist** (persists UI state across refreshes)
-- **styled-components** with a shared theme
+- **styled-components**, with design-system tokens as CSS custom properties
+  (`lib/ds/tokens.css`) and the legacy theme (`lib/theme.ts`) still in use
+  on unmigrated screens
 - **Vitest + React Testing Library**
 
 ## Prerequisites
@@ -59,7 +61,8 @@ src/
   lib/
     schemas.ts              # hand-written zod mirroring the Pydantic models
     format.ts               # formatNotional, formatDate, formatDateTime
-    theme.ts                # styled-components theme tokens
+    ds/tokens.css           # design-system tokens (generated, do not hand-edit)
+    theme.ts                # legacy styled-components theme
     store.ts                # configureStore + redux-persist config
     hooks.ts                # typed useAppDispatch/useAppSelector
     globalStyle.ts          # createGlobalStyle reset + base typography

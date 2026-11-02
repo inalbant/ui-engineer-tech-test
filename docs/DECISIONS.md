@@ -1,25 +1,41 @@
 # Decisions
 
-Use this document to log meaningful decisions you made. Short entries of a sentence or two are fine.
+Use this document to log meaningful decisions. Short entries of a sentence or two are fine.
 
-Explain what you chose and why, and what the downside is. Being able to communicate technical and design trade-offs is a crucial part of our daily work.
+Explain what you chose, why, and what the downside is. Communicating design and technical trade-offs is a crucial part of our daily work.
 
 Don't feel you have to include every minor decision.
 
 ---
 
-## Observations
+## Part 2: Migration
 
-What did you find in Part 1? Include what you noticed, and what you did about it, or would do if you had more time. Aim for breadth across categories.
+Decisions you made while migrating the trade detail page: where you followed the reference, where you deviated, and why.
 
-- ...
+-
 
-- ...
+## Gaps and problems in the system
 
-- ...
+Where the page needed something the system doesn't cover, or a token or component looked wrong. For each: what the page needed, what the system offers, what you did, and what you would propose. If you already covered it in `AUDIT.md`, point to it rather than repeating it.
 
-## MVP definition
+-
 
-What did you decide to include in your implementation of the feature in Part 2, and why? What did you consider and rule out? What would you add next if you had more time?
+## Other things I noticed
 
-...
+Behavioural bugs or anything else outside the migration that you spotted but didn't fix, and how much each matters.
+
+-
+
+## Part 3: Finesse
+
+What you changed, why it was worth the time, and how you checked it (tools, measurements, devices).
+
+Screen capture:
+
+-
+
+## Next
+
+What you would do with more time.
+
+-

@@ -7,41 +7,43 @@ type Tone = "neutral" | "warn" | "success" | "danger" | "muted";
 
 const toneStyles = {
   neutral: css`
-    background: ${({ theme }) => theme.colors.bg};
-    color: ${({ theme }) => theme.colors.text};
-    border-color: ${({ theme }) => theme.colors.border};
+    --badge-fill: var(--bg-tint);
+    --badge-ink: var(--fg-secondary);
   `,
   warn: css`
-    background: ${({ theme }) => theme.colors.warnSoft};
-    color: ${({ theme }) => theme.colors.warn};
-    border-color: ${({ theme }) => theme.colors.warnSoft};
+    --badge-fill: var(--status-warning-tint);
+    --badge-ink: var(--status-warning-on-subtle);
   `,
   success: css`
-    background: ${({ theme }) => theme.colors.successSoft};
-    color: ${({ theme }) => theme.colors.success};
-    border-color: ${({ theme }) => theme.colors.successSoft};
+    --badge-fill: var(--status-success-tint);
+    --badge-ink: var(--status-success-on-subtle);
   `,
   danger: css`
-    background: ${({ theme }) => theme.colors.dangerSoft};
-    color: ${({ theme }) => theme.colors.danger};
-    border-color: ${({ theme }) => theme.colors.dangerSoft};
+    --badge-fill: var(--status-danger-tint);
+    --badge-ink: var(--status-danger-on-subtle);
   `,
   muted: css`
-    background: ${({ theme }) => theme.colors.bg};
-    color: ${({ theme }) => theme.colors.textMuted};
-    border-color: ${({ theme }) => theme.colors.border};
+    --badge-fill: var(--bg-tint);
+    --badge-ink: var(--fg-tertiary);
   `,
 };
 
 export const Badge = styled.span<{ $tone?: Tone }>`
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
-  border-radius: ${({ theme }) => theme.radii.pill};
-  border: 1px solid;
-  font-size: ${({ theme }) => theme.fontSizes.xs};
-  font-weight: ${({ theme }) => theme.weights.medium};
+  gap: var(--space-4);
+  height: var(--control-xs-height);
+  padding: 0 var(--space-4);
+  border: var(--border-width-hairline) solid transparent;
+  border-radius: var(--radius-pill);
+  background: var(--badge-fill);
+  color: var(--badge-ink);
+  font-size: var(--text-meta);
+  line-height: var(--text-meta-line-height);
+  font-weight: var(--text-meta-weight);
+  white-space: nowrap;
   text-transform: capitalize;
+  font-variant-numeric: tabular-nums;
 
   ${({ $tone = "neutral" }) => toneStyles[$tone]}
 `;

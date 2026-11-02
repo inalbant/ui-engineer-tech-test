@@ -11,7 +11,8 @@ stack running.
 
 ## What's in here
 
-- `docs/` — the task brief, decisions template, and AI usage template.
+- `docs/` — the task brief, plus the audit, decisions and AI usage templates.
+- `design/reference.html` — the design reference. Open it directly in a browser.
 - `frontend/` — a Next.js 16.1.6 trade management app. This is where you work.
 - `src/` — a FastAPI backend (Python 3.13 + SQLite) that the front end talks to.
 - `data/trades.db` — pre-populated database (40 trades, 125 emails, 26 notes).

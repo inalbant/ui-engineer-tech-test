@@ -1,56 +1,98 @@
-# Yantra front-end test
+# Yantra UI engineering test
 
-**Time budget: 2.5 hours.** There are two parts. Work through them in order. We are assessing on quality over quantity / completeness.
+**Time budget: 2.5 hours.** There are three parts. Work through them in order. We are assessing quality of work over quantity / completeness.
+
+## Context
+
+This repo is a small trade blotter that predates our design system. We are migrating it onto the system used by our product, Arch.
+
+- **The design reference** — `design/reference.html` — is a self-contained prototype of Arch, built entirely on the system. Open it straight in a browser; there is no build step. It is the source of truth for how the system looks and behaves, so inspect it in DevTools, measure it and click around. It opens in the light theme, which is the one we are targeting. Its data and product logic are not part of the test.
+- **The tokens** — `frontend/src/lib/ds/tokens.css` — are generated from the system and imported globally. Use the custom properties (`var(--space-8)`, `var(--fg-default)`, …) in new and migrated code. Don't hand-edit the file; if a token looks wrong or missing, say so in `DECISIONS.md`.
+- **Legacy styling** lives in `frontend/src/lib/theme.ts` and is read via `${({ theme }) => …}`. It goes away as screens migrate.
+
+A colleague has made a start. They landed the tokens, the font and the base styles, and migrated the trades list (`/trades`). Everything else is still legacy.
+
+### Where to look in the reference
+
+The blotter's screens don't map one-to-one onto Arch. These are their closest counterparts:
+
+| In the blotter | In the reference |
+|----------------|------------------|
+| Trades list (`/trades`) | **Lattice** in the left rail: a pipeline's list of breaks. Click a group (e.g. Cleared) to expand its trades. |
+| Trade detail (`/trades/[id]`) | The drawer that opens when you click a trade in Lattice. |
+| Emails on a trade | **Trade support inbox**: click a row, then the **Email thread** tab in the drawer. |
+| Assistant drawer | **Chat**. |
+| Page headings and overall feel | **Home**. |
+
+Sections that show "Not yet implemented" are outside this exercise.
 
 ## AI policy
 
-We use AI tooling heavily ourselves. **We expect you will want to use it, and we are testing how you directed it.** Use `AI_USAGE.md`, to tell us specifically how you steered your AI tools toward a solution you are happy with submitting.
+We use AI tooling heavily ourselves. **We expect you will want to use it, and we are testing how you directed it.** Use `AI_USAGE.md` to tell us specifically how you steered your AI tools toward a result you are happy to submit.
 
-## Part 1: Explore the app (~50 minutes)
+## Part 1: Review the migration (~40 minutes)
 
-Before writing any feature code, get the app running and spend time with it. Read the code, use it in the browser, open DevTools. The app is functional but it is not polished - there are a number of issues across a range of categories including accessibility, UX, performance, responsive behaviour, and visual consistency.
+Treat your colleague's work as a pull request you have been asked to review before it merges. Write your review in `AUDIT.md`.
 
-Your job in this part is to find them. Document what you notice in the **Observations** section of `DECISIONS.md`, noting what you found and what you did about it (if anything). We are not expecting you to fix everything; we want to see what you notice and how you document those findings.
+### 1a. Component review (~25 minutes)
 
-## Part 2: Build (~90 minutes)
+Your colleague migrated the page title, the status filter, the trades table and the status badges, along with the base styles (font, colours, focus and loading). Compare each of those with the design reference and note where they don't match: what the system specifies, what the build actually does, and how much it matters.
 
-Below is a brief for a new product feature you have been tasked with implementing. It's deliberately loosely defined. Consider what an MVP might look like in your opinion, and implement it. We are looking to understand how you interpret the product requirement and prioritise and design functionality.
+The app header and the overall page layout haven't been migrated yet, so differences there aren't discrepancies. Save them for 1b.
 
-### The product feature brief
+Be precise. Values beat adjectives: "the icon is 18px; the system's icons are 16px", not "the icon looks big". Look beyond the static screen too: states, interaction, keyboard, loading and performance. Where the system itself looks wrong or says nothing, note that as well.
 
-When a trade is in dispute, our users spend a lot of time context-switching: they read the email thread in the app, then switch to their email client to draft a response to the counterparty, then come back to log what they did. We want to close that loop by letting users compose and send a reply to a counterparty without leaving the app.
+You don't need to fix everything you find. Fix anything you would block the merge on if it is quick; otherwise note it and move on.
 
-It is up to you to decide what the MVP of this feature looks like and implement it. It does not need to be a perfectly crafted UI, but it should show some consideration for user experience based on how you think users might interact with the application as part of their workflow. Document your scoping decisions in `DECISIONS.md`.
+### 1b. Closing the gap (~15 minutes)
 
-### Constraints
+Even with every component fixed, the page as a whole won't feel like it belongs in Arch. In a few paragraphs: what would you change next, in what order, and why? What's missing from the system to get there, and what would you ask design before you started?
 
-- The `POST /api/trades/{id}/notes` endpoint is the only write path the API provides. The API has no email-sending capability, so for this MVP "sending" means logging the composed reply as a note — the assumption being it is picked up downstream. Your implementation can use this endpoint as is, or you can modify or replicate it. Regardless of how you approach this, be sure to rationalise your decisions and explain any trade-offs in `DECISIONS.md`.
-- Plain text is fine, no rich-text editor needed.
-- There are existing styled-components primitives you can use. Anything new that you add should feel as though it is part of the same design.
-- Auth is out of scope. If you need to reference the current user's address (e.g. in the content of a note), assume `trader@hedgefund.com`. The notes endpoint only accepts a `content` string — there is no sender field.
-- The AI assistant drawer is an existing feature — you do not need to integrate it with your implementation.
+## Part 2: Migrate the trade detail page (~70 minutes)
+
+Migrate `/trades/[id]` (the trade header, the emails panel, the notes panel and the `ui/` primitives they use) onto the system, so that it looks and behaves like it belongs in the reference.
+
+- Match the reference wherever it has an answer.
+- Where the page needs something the system doesn't cover, decide whether to compose it from what exists or propose an addition. Record the decision in `DECISIONS.md`.
+- Keep behaviour as it is unless the migration needs a change. Note any behavioural bugs you spot rather than fixing them all.
+- The app header and the assistant drawer are out of scope for this part.
+
+## Part 3: Finesse (~30 minutes)
+
+Pick one or two things that would make the blotter feel better to use: a transition, a loading state, a micro-interaction, a performance fix. Anything in the app is fair game here, including the header and drawer.
+
+Restraint counts. One considered change beats five quick ones.
+
+Record a short screen capture (2 minutes max) showing the before and after. In `DECISIONS.md`, explain what you changed, why, and how you checked it.
+
+## Constraints
+
+- Light theme only.
+- Build on styled-components and the tokens. Don't add a component library or CSS framework.
+- The API is out of scope.
 
 ## Deliverables
 
 Fork the repo, commit and push your work, and share the link with us. Your submission **must** include:
 
-1. The feature code (however far you got).
-2. `DECISIONS.md` - document your observations from Part 1, and the decisions that shaped what you built in Part 2.
-3. `AI_USAGE.md` - four short sections: **delegated / overrode / misled / next-time**. The override section is the one we read most closely.
+1. The code (however far you got).
+2. `AUDIT.md`: your Part 1 review.
+3. `DECISIONS.md`: your migration decisions, gaps or problems you found in the system, other issues you noticed, and your Part 3 rationale with a link to the screen capture.
+4. `AI_USAGE.md`: four short sections, **delegated / overrode / misled / next-time**. The override section is the one we read most closely.
 
 ## What we are evaluating
 
-We care about:
+- **What you notice, and how precisely.** Type, colour, spacing, states, motion, performance.
+- **Fidelity.** Does the migrated UI match the system, in its tokens as well as its looks?
+- **Judgement.** What you do where the system and the product disagree, or where the system is silent.
+- **Craft and restraint.** Motion and interaction that feel considered, not decorated.
+- **UI performance.** Whether you find what makes the UI slow or janky, and how you checked.
+- **Written artefacts.** Clear, specific entries tell us a lot about how you think.
 
-- **What you notice.** Do you pick up on issues across different areas of the product?
-- **Code quality inside the feature slice.** Does your new code fit the patterns already in place? Is it PR-reviewable?
-- **UX, accessibility & interaction judgement.** Does the feature feel considered? Does it handle edge cases gracefully?
-- **Written artefacts.** Clear, specific entries in `DECISIONS.md` and `AI_USAGE.md` tell us a lot about how you think.
-
-We are **not** evaluating: how _much_ work you do. We care more about quality code and written notes than we do the sheer volume of either.
+We are **not** evaluating the backend, state management, test coverage, or how _much_ you got through.
 
 ## What happens next
 
-- **Submission review** - we read the code and your DECISIONS/AI_USAGE files before the next call.
-- **60-minute video call** - you walk us through what you built, we will ask you follow-up questions.
-- **On-site final** - an in person demo of your solution to more of our team, a technical and product discussion, and Q&A for assessing team-fit.
+- **Submission review**: we run your branch and read your AUDIT, DECISIONS and AI_USAGE files before the next call.
+- **60-minute video call**: you walk us through what you did, then we pair on some UI together.
+- **On-site final**: a design crit alongside one of our designers, plus Q&A for assessing team fit.
