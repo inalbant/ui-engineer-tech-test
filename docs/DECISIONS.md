@@ -30,8 +30,6 @@ Behavioural bugs or anything else outside the migration that you spotted but did
 
 What you changed, why it was worth the time, and how you checked it (tools, measurements, devices).
 
-Screen capture:
-
 -
 
 ## Next

@@ -63,7 +63,7 @@ Pick one or two things that would make the blotter feel better to use: a transit
 
 Restraint counts. One considered change beats five quick ones.
 
-Record a short screen capture (2 minutes max) showing the before and after. In `DECISIONS.md`, explain what you changed, why, and how you checked it.
+In `DECISIONS.md`, explain what you changed, why, and how you checked it. You'll demo it to us on the call.
 
 ## Constraints
 
@@ -77,7 +77,7 @@ Fork the repo, commit and push your work, and share the link with us. Your submi
 
 1. The code (however far you got).
 2. `AUDIT.md`: your Part 1 review.
-3. `DECISIONS.md`: your migration decisions, gaps or problems you found in the system, other issues you noticed, and your Part 3 rationale with a link to the screen capture.
+3. `DECISIONS.md`: your migration decisions, gaps or problems you found in the system, other issues you noticed, and your Part 3 rationale.
 4. `AI_USAGE.md`: four short sections, **delegated / overrode / misled / next-time**. The override section is the one we read most closely.
 
 ## What we are evaluating
@@ -94,5 +94,5 @@ We are **not** evaluating the backend, state management, test coverage, or how _
 ## What happens next
 
 - **Submission review**: we run your branch and read your AUDIT, DECISIONS and AI_USAGE files before the next call.
-- **60-minute video call**: you walk us through what you did, then we pair on some UI together.
-- **On-site final**: a design crit alongside one of our designers, plus Q&A for assessing team fit.
+- **60-minute video call**: you walk us through what you did and we review together.
+- **On-site final**: an exercise plus Q&A for assessing team fit.
