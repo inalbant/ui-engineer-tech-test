@@ -53,7 +53,7 @@ The front end dev server will start and be accessible at http://localhost:3000.
 | `GET`  | `/api/trades` | List trades; filter by status with `?status=dispute` (repeatable). |
 | `GET`  | `/api/trades/{trade_id}` | Single trade with its emails and notes. |
 | `POST` | `/api/trades/{trade_id}/notes` | Submit a note. Only `dispute` trades accept it; returns `400` otherwise. |
-| `WS`   | `/ws/assistant` | Streaming assistant. Receives `{"message": "..."}`, streams back `{"token": "..."}` frames, closes with `{"done": true}`. |
+| `WS`   | `/ws/assistant` | Streaming assistant. Receives `{"message": "..."}`, streams back `{"token": "..."}` frames, ends each reply with `{"done": true}`. The connection stays open for further messages. |
 
 Full interactive docs at http://localhost:8000/docs once the API is running.
 
