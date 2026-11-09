@@ -40,11 +40,11 @@ Notional amounts are left-aligned without tabular numerals. The reference right-
 
 **Disposition:** Not fixed; follow up by using `--row-lg` for body rows and right-aligning the notional column with tabular numerals.
 
-### 5. Status badges use a different variant — follow-up
+### 5. Status badges use a different variant — fixed during Part 2
 
 The reference’s table statuses use outlined badges with a 6px radius. The build uses tinted fills and a 999px pill radius. I would use the outlined variant and the system’s `--radius-small`, retaining appropriate semantic colours for the blotter’s statuses.
 
-**Disposition:** Not fixed; deferred visual correction.
+**Disposition:** Fixed through the shared Badge primitive during Part 2: transparent background, semantic outline and `--radius-small` (6px). The trades list and detail header now share this variant. The list was inspected live after the change; status labels and existing colour mapping are retained. Detail headers use a separate filled/subtle variant, as shown in the supplied drawer screenshot.
 
 ### 6. Page heading combines inconsistent typography tokens — follow-up
 
@@ -70,7 +70,7 @@ Under network throttling, changing status filters provides no visible loading fe
 
 I would migrate the shared app shell first, starting with the header, because it frames both the trades list and detail screens. The existing header should adopt Arch’s typography, spacing, colours and control styles. Arch’s sidebar toggle, search, notifications and account controls demonstrate its wider navigation pattern, but their absence is not itself a migration defect. Before adding them, I would clarify which navigation and global actions the blotter requires.
 
-Next, I would address the workspace layout. The Trades page constrains its main content to a centred 1200px container with 24px horizontal padding. Arch’s workspace appears to fill the available width between navigation and supporting panels. I would give the table more working space on wider screens, confirming the intended gutters, minimum usable table width and responsive behaviour with design.
+The Part 2 detail panel now uses the available workspace width alongside the table, replacing the centred 1200px list constraint. I would next confirm the workspace gutters, minimum usable table width and responsive behaviour with design. The chosen 460px detail width and 900px transition to a full-width panel are local adaptations, not established reference measurements.
 
 Then I would integrate the assistant into that workspace. It currently opens from a single “Assistant” header button as a drawer with a backdrop over the content. Arch exposes chat through “Ask Arch Agent” in the header and “Chat” in the sidebar, and opens an adjacent panel that reduces the main workspace width. Adopting that layout would let users inspect trades and emails while consulting the assistant. I would confirm how the panel should behave when the viewport cannot comfortably accommodate both areas.
 

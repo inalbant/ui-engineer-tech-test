@@ -4,80 +4,68 @@ import styled, { css } from "styled-components";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger";
 type Size = "sm" | "md";
-
-interface StyleProps {
-  $variant?: Variant;
-  $size?: Size;
-}
+interface StyleProps { $variant?: Variant; $size?: Size; }
 
 const variantStyles = {
   primary: css`
-    background: ${({ theme }) => theme.colors.accent};
-    color: #fff;
-    border: 1px solid ${({ theme }) => theme.colors.accent};
-    &:hover:not(:disabled) {
-      background: ${({ theme }) => theme.colors.accentHover};
-      border-color: ${({ theme }) => theme.colors.accentHover};
-    }
+    background: var(--brand-control);
+    color: var(--brand-on-control);
+    border-color: var(--brand-control);
+    --button-hover: var(--state-hover-on-fill);
+    --button-press: var(--state-press-on-fill);
   `,
   secondary: css`
-    background: ${({ theme }) => theme.colors.surface};
-    color: ${({ theme }) => theme.colors.text};
-    border: 1px solid ${({ theme }) => theme.colors.border};
-    &:hover:not(:disabled) {
-      background: ${({ theme }) => theme.colors.bg};
-    }
+    background: var(--bg-default);
+    color: var(--fg-default);
+    border-color: var(--border-default);
   `,
   ghost: css`
     background: transparent;
-    color: ${({ theme }) => theme.colors.textMuted};
-    border: 1px solid transparent;
-    &:hover:not(:disabled) {
-      background: ${({ theme }) => theme.colors.bg};
-      color: ${({ theme }) => theme.colors.text};
-    }
+    color: var(--fg-secondary);
+    border-color: transparent;
   `,
   danger: css`
-    background: ${({ theme }) => theme.colors.danger};
-    color: #fff;
-    border: 1px solid ${({ theme }) => theme.colors.danger};
-    &:hover:not(:disabled) {
-      filter: brightness(0.92);
-    }
-  `,
-};
-
-const sizeStyles = {
-  sm: css`
-    padding: 6px 12px;
-    font-size: ${({ theme }) => theme.fontSizes.sm};
-  `,
-  md: css`
-    padding: 8px 16px;
-    font-size: ${({ theme }) => theme.fontSizes.md};
+    background: var(--status-danger-fill-strong);
+    color: var(--status-danger-on-fill);
+    border-color: var(--status-danger-fill-strong);
+    --button-hover: var(--state-hover-on-fill);
+    --button-press: var(--state-press-on-fill);
   `,
 };
 
 export const Button = styled.button.attrs<StyleProps>(({ type }) => ({
   type: type ?? "button",
 }))<StyleProps>`
+  --button-hover: var(--state-hover);
+  --button-press: var(--state-press);
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  border-radius: ${({ theme }) => theme.radii.md};
-  font-weight: ${({ theme }) => theme.weights.medium};
-  transition:
-    background 120ms ease,
-    border-color 120ms ease,
-    color 120ms ease;
+  gap: var(--space-4);
+  height: ${({ $size }) => $size === "sm" ? "var(--control-sm-height)" : "var(--control-md-height)"};
+  padding: 0 ${({ $size }) => $size === "sm" ? "var(--control-sm-padding-x)" : "var(--control-md-padding-x)"};
+  border: var(--border-width-hairline) solid;
+  border-radius: ${({ $size }) => $size === "sm" ? "var(--radius-small)" : "var(--radius-control)"};
+  font-size: ${({ $size }) => $size === "sm" ? "var(--text-meta)" : "var(--text-control)"};
+  line-height: ${({ $size }) => $size === "sm" ? "var(--text-meta-line-height)" : "var(--text-control-line-height)"};
+  font-weight: var(--text-control-weight);
+  white-space: nowrap;
   cursor: pointer;
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
-
   ${({ $variant = "primary" }) => variantStyles[$variant]}
-  ${({ $size = "md" }) => sizeStyles[$size]}
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    transition: background var(--duration-quick) var(--easing-standard);
+  }
+  &:hover:not(:disabled)::after { background: var(--button-hover); }
+  &:active:not(:disabled)::after { background: var(--button-press); }
+  &:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+  &:disabled { cursor: default; opacity: var(--state-disabled-opacity); }
+  @media (prefers-reduced-motion: reduce) { &::after { transition: none; } }
+  @media (forced-colors: active) { &:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; } }
 `;

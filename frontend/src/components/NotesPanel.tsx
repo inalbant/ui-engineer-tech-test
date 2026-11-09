@@ -8,89 +8,54 @@ import { formatDateTime } from "@/lib/format";
 import { BREAK_STATUSES, type Note, type TradeStatus } from "@/lib/schemas";
 
 const List = styled.ol`
-  margin: 0 0 ${({ theme }) => theme.space.lg};
+  margin: 0 0 var(--space-stack);
   padding: 0;
   list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.space.md};
+  display: grid;
+  gap: var(--space-stack-tight);
 `;
-
 const Item = styled.li`
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  background: ${({ theme }) => theme.colors.bg};
-  border-radius: ${({ theme }) => theme.radii.md};
-  padding: ${({ theme }) =>
-    `${theme.space.md} ${theme.space.lg}`};
-
-  p {
-    margin: 0;
-    white-space: pre-wrap;
-    font-size: ${({ theme }) => theme.fontSizes.md};
-  }
-
-  time {
-    display: block;
-    margin-top: 4px;
-    font-size: ${({ theme }) => theme.fontSizes.xs};
-    color: ${({ theme }) => theme.colors.textFaint};
-  }
+  padding-bottom: var(--space-row-y);
+  border-bottom: var(--border-width-hairline) solid var(--border-divider);
+  overflow-wrap: anywhere;
+  p { margin: 0; white-space: pre-wrap; font-size: var(--text-body); line-height: var(--text-body-line-height); color: var(--fg-secondary); }
+  time { display: block; margin-top: var(--space-4); font-size: var(--text-meta); line-height: var(--text-meta-line-height); color: var(--fg-tertiary); }
 `;
-
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.space.sm};
-
-  label {
-    font-size: ${({ theme }) => theme.fontSizes.xs};
-    font-weight: ${({ theme }) => theme.weights.medium};
-    color: ${({ theme }) => theme.colors.textMuted};
-  }
-
+  gap: var(--space-stack-tight);
+  label { font-size: var(--text-label); line-height: var(--text-label-line-height); font-weight: var(--text-label-weight); color: var(--fg-tertiary); }
   textarea {
     width: 100%;
-    min-height: 80px;
-    padding: ${({ theme }) =>
-      `${theme.space.sm} ${theme.space.md}`};
-    border: 1px solid ${({ theme }) => theme.colors.border};
-    border-radius: ${({ theme }) => theme.radii.md};
-    background: ${({ theme }) => theme.colors.surface};
+    min-height: var(--space-80);
+    padding: var(--space-8) var(--space-12);
+    border: var(--border-width-hairline) solid var(--border-control);
+    border-radius: var(--radius-control);
+    background: var(--bg-default);
+    color: var(--fg-default);
     font-family: inherit;
-    font-size: ${({ theme }) => theme.fontSizes.md};
+    font-size: var(--text-control);
+    line-height: var(--text-control-line-height);
     resize: vertical;
-
-    &:focus {
-      outline: none;
-      border-color: ${({ theme }) => theme.colors.accent};
-    }
+    &::placeholder { color: var(--fg-placeholder); }
+    &:hover { border-color: var(--border-strong); }
+    &:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+    @media (forced-colors: active) { &:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; } }
   }
-
-  .row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    .count {
-      font-size: ${({ theme }) => theme.fontSizes.xs};
-      color: ${({ theme }) => theme.colors.textFaint};
-    }
-  }
-
-  .error {
-    margin: 0;
-    font-size: ${({ theme }) => theme.fontSizes.xs};
-    color: ${({ theme }) => theme.colors.danger};
-  }
+  .row { display: flex; flex-wrap: wrap; gap: var(--space-8); align-items: center; justify-content: space-between; }
+  .count { font-size: var(--text-meta); line-height: var(--text-meta-line-height); color: var(--fg-tertiary); font-variant-numeric: tabular-nums; }
+  .error { margin: 0; font-size: var(--text-meta); line-height: var(--text-meta-line-height); color: var(--status-danger-on-subtle); }
 `;
 
 interface NotesPanelProps {
   tradeId: string;
   status: TradeStatus;
   notes: Note[];
+  headingHidden?: boolean;
 }
 
-export function NotesPanel({ tradeId, status, notes }: NotesPanelProps) {
+export function NotesPanel({ tradeId, status, notes, headingHidden = false }: NotesPanelProps) {
   const [draft, setDraft] = useState("");
   const [submitNote, { isLoading, error }] = useSubmitNoteMutation();
 
@@ -107,7 +72,7 @@ export function NotesPanel({ tradeId, status, notes }: NotesPanelProps) {
   };
 
   return (
-    <Panel title={`Notes (${notes.length})`}>
+    <Panel title={`Notes (${notes.length})`} headingHidden={headingHidden}>
       {notes.length === 0 ? (
         <EmptyState
           title="No notes yet"

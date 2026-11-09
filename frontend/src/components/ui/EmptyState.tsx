@@ -3,37 +3,23 @@
 import styled from "styled-components";
 
 const Wrap = styled.div`
-  border: 1px dashed ${({ theme }) => theme.colors.border};
-  background: ${({ theme }) => theme.colors.bg};
-  border-radius: ${({ theme }) => theme.radii.md};
-  padding: ${({ theme }) =>
-    `${theme.space.xl} ${theme.space.lg}`};
+  padding: var(--space-stack-loose) var(--space-stack);
   text-align: center;
 `;
-
 const Title = styled.p`
   margin: 0;
-  font-size: ${({ theme }) => theme.fontSizes.md};
-  font-weight: ${({ theme }) => theme.weights.medium};
-  color: ${({ theme }) => theme.colors.textMuted};
+  font-size: var(--text-body);
+  line-height: var(--text-body-line-height);
+  font-weight: var(--weight-medium);
+  color: var(--fg-secondary);
 `;
-
 const Description = styled.p`
-  margin: ${({ theme }) => `${theme.space.xs} 0 0`};
-  font-size: ${({ theme }) => theme.fontSizes.xs};
-  color: ${({ theme }) => theme.colors.textFaint};
+  margin: var(--space-4) 0 0;
+  font-size: var(--text-meta);
+  line-height: var(--text-meta-line-height);
+  color: var(--fg-tertiary);
 `;
-
-interface EmptyStateProps {
-  title: string;
-  description?: string;
-}
-
+interface EmptyStateProps { title: string; description?: string; }
 export function EmptyState({ title, description }: EmptyStateProps) {
-  return (
-    <Wrap>
-      <Title>{title}</Title>
-      {description ? <Description>{description}</Description> : null}
-    </Wrap>
-  );
+  return <Wrap><Title>{title}</Title>{description ? <Description>{description}</Description> : null}</Wrap>;
 }

@@ -6,6 +6,8 @@ import styled, { keyframes } from "styled-components";
 import { useListTradesQuery } from "@/lib/api/tradesApi";
 import { TradeStatusSchema, type TradeStatus } from "@/lib/schemas";
 import { StatusFilter } from "@/components/StatusFilter";
+import { TradesWorkspace } from "@/components/TradesWorkspace";
+import { TradeDetailPanel } from "@/components/TradeDetailPanel";
 import { TradesTable } from "@/components/TradesTable";
 import { EmptyState } from "@/components/ui";
 
@@ -88,6 +90,9 @@ export default function TradesPage() {
 function TradesPageInner() {
   const params = useSearchParams();
   const statuses = parseStatuses(params.getAll("status"));
+  const selectedId = params.get("trade") || undefined;
+  const listParams = new URLSearchParams(params.toString());
+  listParams.delete("trade");
 
   const query = useListTradesQuery(
     statuses.length > 0 ? statuses : undefined,
@@ -125,7 +130,7 @@ function TradesPageInner() {
   };
 
   return (
-    <div>
+    <TradesWorkspace selectedId={selectedId} detail={selectedId ? <TradeDetailPanel tradeId={selectedId} /> : null}>
       <Header>
         <div>
           <h1>Trades</h1>
@@ -148,8 +153,8 @@ function TradesPageInner() {
           description="Check the API is running on http://localhost:8000."
         />
       ) : (
-        <TradesTable trades={trades} />
+        <TradesTable trades={trades} search={listParams.toString()} />
       )}
-    </div>
+    </TradesWorkspace>
   );
 }

@@ -9,6 +9,7 @@ import { AssistantDrawer } from "./AssistantDrawer";
 
 const Shell = styled.div`
   min-height: 100vh;
+  &:has([data-trades-workspace]) { height: 100dvh; }
   display: flex;
   flex-direction: column;
 `;
@@ -66,6 +67,14 @@ const Nav = styled.nav`
 `;
 
 const Main = styled.main`
+  &:has([data-trades-workspace]) {
+    display: grid;
+    min-height: 0;
+    max-width: none;
+    padding: 0;
+    overflow: hidden;
+  }
+
   flex: 1;
   margin: 0 auto;
   width: 100%;

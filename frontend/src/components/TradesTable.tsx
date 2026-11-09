@@ -4,13 +4,14 @@ import styled from "styled-components";
 import Link from "next/link";
 import { Badge, statusTone } from "./ui";
 import { formatDate, formatNotional } from "@/lib/format";
+import { useTradesWorkspace } from "./TradesWorkspace";
 import type { Trade } from "@/lib/schemas";
 
 const Frame = styled.div`
   background: var(--bg-default);
   border: var(--border-width-hairline) solid var(--border-default);
   border-radius: var(--radius-control);
-  overflow: hidden;
+  overflow: auto;
 `;
 
 const Table = styled.table`
@@ -46,11 +47,17 @@ const Table = styled.table`
   }
 
   tbody tr {
+    cursor: pointer;
     transition: background-color 300ms ease-in;
   }
 
   tbody tr:hover {
     background: var(--state-hover);
+  }
+
+  tbody tr[data-selected="true"] {
+    background: var(--state-selected);
+    box-shadow: inset var(--border-width-hairline) 0 var(--border-highlight);
   }
 
   tbody tr:last-child td {
@@ -68,9 +75,11 @@ const TradeLink = styled(Link)`
 
 interface TradesTableProps {
   trades: Trade[];
+  search?: string;
 }
 
-export function TradesTable({ trades }: TradesTableProps) {
+export function TradesTable({ trades, search = "" }: TradesTableProps) {
+  const workspace = useTradesWorkspace();
   return (
     <Frame>
       <Table>
@@ -86,9 +95,30 @@ export function TradesTable({ trades }: TradesTableProps) {
         </thead>
         <tbody>
           {trades.map((t) => (
-            <tr key={t.id}>
+            <tr
+              key={t.id}
+              data-selected={workspace?.selectedId === t.id}
+              onClick={(event) => {
+                const target = event.target as HTMLElement;
+                if (target.closest("a, button, input") || window.getSelection()?.toString()) return;
+                event.currentTarget.querySelector<HTMLAnchorElement>("a")?.click();
+              }}
+            >
               <td>
-                <TradeLink href={`/trades/${t.id}`}>{t.trade_id}</TradeLink>
+                <TradeLink
+                  href={`/trades/${t.id}${search ? `?${search}` : ""}`}
+                  scroll={false}
+                  aria-current={workspace?.selectedId === t.id ? "true" : undefined}
+                  onClick={(event) => {
+                    if (workspace && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+                      event.preventDefault();
+                      workspace.trigger.current = event.currentTarget;
+                      workspace.openTrade(t.id);
+                    }
+                  }}
+                >
+                  {t.trade_id}
+                </TradeLink>
               </td>
               <td>{t.counterparty_name}</td>
               <td>{t.product_type}</td>

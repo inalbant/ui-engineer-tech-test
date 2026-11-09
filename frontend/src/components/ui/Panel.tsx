@@ -1,46 +1,49 @@
 "use client";
 
-import styled from "styled-components";
-import type { ReactNode } from "react";
+import styled, { css } from "styled-components";
+import { useId, type ReactNode } from "react";
 
 const PanelRoot = styled.section`
-  background: ${({ theme }) => theme.colors.surface};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.radii.lg};
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  min-width: 0;
+  background: var(--bg-default);
+  color: var(--fg-default);
 `;
-
-const PanelHeader = styled.header`
+const PanelHeader = styled.header<{ $hidden: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: ${({ theme }) => theme.space.md};
-  padding: ${({ theme }) =>
-    `${theme.space.md} ${theme.space.lg}`};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
-
+  gap: var(--space-stack-tight);
+  padding: var(--space-row-y);
+  border-bottom: var(--border-width-hairline) solid var(--border-divider);
   h2 {
     margin: 0;
-    font-size: ${({ theme }) => theme.fontSizes.md};
-    font-weight: ${({ theme }) => theme.weights.semibold};
+    font-size: var(--text-heading);
+    line-height: var(--text-heading-line-height);
+    font-weight: var(--text-heading-weight);
   }
-`;
+  ${({ $hidden }) => $hidden && css`
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  `}
 
+`;
 const PanelBody = styled.div`
-  padding: ${({ theme }) => theme.space.lg};
+  padding: var(--space-row-y);
 `;
-
-interface PanelProps {
-  title: string;
-  actions?: ReactNode;
-  children: ReactNode;
-}
-
-export function Panel({ title, actions, children }: PanelProps) {
+interface PanelProps { title: string; actions?: ReactNode; children: ReactNode; headingHidden?: boolean; }
+export function Panel({ title, actions, children, headingHidden = false }: PanelProps) {
+  const titleId = useId();
   return (
-    <PanelRoot>
-      <PanelHeader>
-        <h2>{title}</h2>
+    <PanelRoot aria-labelledby={titleId}>
+      <PanelHeader $hidden={headingHidden}>
+        <h2 id={titleId}>{title}</h2>
         {actions ? <div>{actions}</div> : null}
       </PanelHeader>
       <PanelBody>{children}</PanelBody>
