@@ -30,7 +30,9 @@ Behavioural bugs or anything else outside the migration that you spotted but did
 
 What you changed, why it was worth the time, and how you checked it (tools, measurements, devices).
 
--
+- I moved the assistant’s message bubble styled component outside the render function, passed the message role through a styling prop, and replaced array-index keys with message IDs. Previously, each update created new component types, repeatedly remounting existing bubbles and triggering a hook-order error in development.
+
+  I checked the change using React DevTools Profiler exports before and after. The recordings show repeated bubble remounting before the change and stable component identities afterwards; the hook-order error also disappeared. Median assistant render duration was similar (2.6 ms before, 2.5 ms after), with mixed results across other timing metrics, so I am claiming improved component stability and correctness rather than a demonstrated rendering speed-up.
 
 ## Next
 

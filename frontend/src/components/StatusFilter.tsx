@@ -23,6 +23,7 @@ const Track = styled.div`
 `;
 
 const Segment = styled.button<{ $active: boolean }>`
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: var(--space-4);
@@ -46,27 +47,33 @@ const Segment = styled.button<{ $active: boolean }>`
   .count {
     color: var(--fg-tertiary);
   }
+
+  &:focus-visible {
+    z-index: 1;
+    outline: none;
+    box-shadow: var(--focus-ring),
+      ${({ $active }) => ($active ? "var(--elevation-low)" : "0 0 0 0 transparent")};
+  }
+
+  @media (forced-colors: active) {
+    &:focus-visible {
+      outline: var(--border-width-rule) solid CanvasText;
+      outline-offset: var(--space-2);
+    }
+  }
 `;
 
 interface StatusFilterProps {
   selected: TradeStatus[];
   counts: Record<TradeStatus, number>;
-  onChange: (next: TradeStatus[]) => void;
+  onToggle: (status: TradeStatus) => void;
 }
 
 export function StatusFilter({
   selected,
   counts,
-  onChange,
+  onToggle,
 }: StatusFilterProps) {
-  const toggle = (s: TradeStatus) => {
-    if (selected.includes(s)) {
-      onChange(selected.filter((x) => x !== s));
-    } else {
-      onChange([...selected, s]);
-    }
-  };
-
   return (
     <Track role="group" aria-label="Filter by status">
       {ALL_STATUSES.map((s) => {
@@ -77,7 +84,7 @@ export function StatusFilter({
             type="button"
             $active={active}
             aria-pressed={active}
-            onClick={() => toggle(s)}
+            onClick={() => onToggle(s)}
           >
             <span>{s}</span>
             <span className="count">{counts[s] ?? 0}</span>

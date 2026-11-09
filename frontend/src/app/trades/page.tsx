@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useMemo } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import styled, { keyframes } from "styled-components";
 import { useListTradesQuery } from "@/lib/api/tradesApi";
 import { TradeStatusSchema, type TradeStatus } from "@/lib/schemas";
@@ -86,7 +86,6 @@ export default function TradesPage() {
 }
 
 function TradesPageInner() {
-  const router = useRouter();
   const params = useSearchParams();
   const statuses = parseStatuses(params.getAll("status"));
 
@@ -107,11 +106,22 @@ function TradesPageInner() {
     return acc;
   }, [trades]);
 
-  const setStatuses = (next: TradeStatus[]) => {
-    const sp = new URLSearchParams();
+  const toggleStatus = (status: TradeStatus) => {
+    // Read the current URL so rapid clicks cannot use an older render's selection.
+    const sp = new URLSearchParams(window.location.search);
+    const current = parseStatuses(sp.getAll("status"));
+    const next = current.includes(status)
+      ? current.filter((s) => s !== status)
+      : [...current, status];
+    sp.delete("status");
     next.forEach((s) => sp.append("status", s));
     const qs = sp.toString();
-    router.replace(qs ? `/trades?${qs}` : "/trades");
+    // Next.js syncs useSearchParams with native history updates without a navigation.
+    window.history.replaceState(
+      null,
+      "",
+      `${window.location.pathname}${qs ? `?${qs}` : ""}${window.location.hash}`,
+    );
   };
 
   return (
@@ -126,7 +136,7 @@ function TradesPageInner() {
         <StatusFilter
           selected={statuses}
           counts={counts}
-          onChange={setStatuses}
+          onToggle={toggleStatus}
         />
       </FilterRow>
 

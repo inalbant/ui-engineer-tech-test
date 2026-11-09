@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { Button } from "./ui";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { closeAssistant } from "@/lib/slices/uiSlice";
-import { useAssistantStream } from "@/lib/ws";
+import { useAssistantStream, type ChatMessage } from "@/lib/ws";
 
 const Backdrop = styled.div<{ $open: boolean }>`
   position: fixed;
@@ -79,6 +79,18 @@ const Empty = styled.p`
   font-size: ${({ theme }) => theme.fontSizes.sm};
 `;
 
+const Bubble = styled.div<{ $role: ChatMessage["role"] }>`
+  padding: ${({ theme }) => `${theme.space.sm} ${theme.space.md}`};
+  border-radius: ${({ theme }) => theme.radii.md};
+  white-space: pre-wrap;
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  background: ${({ theme, $role }) =>
+    $role === "user" ? theme.colors.accentSoft : theme.colors.bg};
+  color: ${({ theme }) => theme.colors.text};
+  margin-left: ${({ $role }) => ($role === "user" ? "24px" : "0")};
+  margin-right: ${({ $role }) => ($role === "assistant" ? "24px" : "0")};
+`;
+
 const InputForm = styled.form`
   padding: ${({ theme }) => theme.space.md};
   border-top: 1px solid ${({ theme }) => theme.colors.border};
@@ -146,26 +158,11 @@ export function AssistantDrawer() {
               see on screen.
             </Empty>
           ) : (
-            messages.map((m, i) => {
-              const Bubble = styled.div`
-                padding: ${({ theme }) =>
-                  `${theme.space.sm} ${theme.space.md}`};
-                border-radius: ${({ theme }) => theme.radii.md};
-                white-space: pre-wrap;
-                font-size: ${({ theme }) => theme.fontSizes.sm};
-                background: ${({ theme }) =>
-                  m.role === "user"
-                    ? theme.colors.accentSoft
-                    : theme.colors.bg};
-                color: ${({ theme }) => theme.colors.text};
-                margin-${m.role === "user" ? "left" : "right"}: 24px;
-              `;
-              return (
-                <Bubble key={i}>
-                  {m.content || (m.role === "assistant" ? "…" : "")}
-                </Bubble>
-              );
-            })
+            messages.map((m) => (
+              <Bubble key={m.id} $role={m.role}>
+                {m.content || (m.role === "assistant" ? "…" : "")}
+              </Bubble>
+            ))
           )}
         </Messages>
 
