@@ -65,7 +65,7 @@ const Segment = styled.button<{ $active: boolean }>`
 
 interface StatusFilterProps {
   selected: TradeStatus[];
-  counts: Record<TradeStatus, number>;
+  counts?: Record<TradeStatus, number>;
   onToggle: (status: TradeStatus) => void;
 }
 
@@ -87,7 +87,7 @@ export function StatusFilter({
             onClick={() => onToggle(s)}
           >
             <span>{s}</span>
-            <span className="count">{counts[s] ?? 0}</span>
+            <span className="count" title="Total across all trades">{counts?.[s] ?? "—"}</span>
           </Segment>
         );
       })}

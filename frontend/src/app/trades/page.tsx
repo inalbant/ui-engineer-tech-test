@@ -12,22 +12,31 @@ import { TradesTable } from "@/components/TradesTable";
 import { EmptyState } from "@/components/ui";
 
 const Header = styled.div`
+  flex-shrink: 0;
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-16);
+  align-items: center;
+  flex-wrap: wrap;
+  column-gap: var(--space-24);
+  row-gap: var(--space-8);
   margin-bottom: var(--space-16);
 
   h1 {
+    flex-shrink: 0;
     margin: 0;
     font-size: var(--text-heading-lg);
     line-height: var(--text-title-line-height);
     font-weight: var(--text-title-weight);
   }
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const FilterRow = styled.div`
-  margin-bottom: var(--space-16);
+  min-width: 0;
+  max-width: 100%;
 `;
 
 const shimmer = keyframes`
@@ -94,12 +103,16 @@ function TradesPageInner() {
   const listParams = new URLSearchParams(params.toString());
   listParams.delete("trade");
 
+  // Totals use the unfiltered cache entry; selected statuses only affect the table.
+  // RTK Query shares this request when the table is also unfiltered.
+  const allTradesQuery = useListTradesQuery(undefined);
   const query = useListTradesQuery(
     statuses.length > 0 ? statuses : undefined,
   );
   const trades = query.data ?? [];
 
   const counts = useMemo(() => {
+    if (!allTradesQuery.data) return undefined;
     const acc: Record<TradeStatus, number> = {
       dispute: 0,
       submitted: 0,
@@ -107,9 +120,9 @@ function TradesPageInner() {
       deleted: 0,
       error: 0,
     };
-    for (const t of trades) acc[t.status] += 1;
+    for (const t of allTradesQuery.data) acc[t.status] += 1;
     return acc;
-  }, [trades]);
+  }, [allTradesQuery.data]);
 
   const toggleStatus = (status: TradeStatus) => {
     // Read the current URL so rapid clicks cannot use an older render's selection.
@@ -132,18 +145,15 @@ function TradesPageInner() {
   return (
     <TradesWorkspace selectedId={selectedId} detail={selectedId ? <TradeDetailPanel tradeId={selectedId} /> : null}>
       <Header>
-        <div>
-          <h1>Trades</h1>
-        </div>
+        <h1>Trades</h1>
+        <FilterRow>
+          <StatusFilter
+            selected={statuses}
+            counts={counts}
+            onToggle={toggleStatus}
+          />
+        </FilterRow>
       </Header>
-
-      <FilterRow>
-        <StatusFilter
-          selected={statuses}
-          counts={counts}
-          onToggle={toggleStatus}
-        />
-      </FilterRow>
 
       {query.isLoading ? (
         <TableSkeleton />

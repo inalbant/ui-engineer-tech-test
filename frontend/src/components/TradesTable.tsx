@@ -8,6 +8,8 @@ import { useTradesWorkspace } from "./TradesWorkspace";
 import type { Trade } from "@/lib/schemas";
 
 const Frame = styled.div`
+  flex: 1;
+  min-height: 0;
   background: var(--bg-default);
   border: var(--border-width-hairline) solid var(--border-default);
   border-radius: var(--radius-control);
@@ -34,6 +36,10 @@ const Table = styled.table`
   }
 
   th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    box-shadow: inset 0 calc(-1 * var(--border-width-hairline)) 0 var(--border-divider);
     height: var(--row-md);
     background: var(--bg-subtle);
     color: var(--fg-secondary);

@@ -36,6 +36,9 @@ const PanelPresence = styled.div`
   @media (prefers-reduced-motion: reduce) { transition: none; }
 `;
 const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
   min-width: 0;
   overflow: auto;
   padding: var(--space-stack-loose);
